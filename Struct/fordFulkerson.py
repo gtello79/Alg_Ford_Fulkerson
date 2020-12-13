@@ -6,6 +6,7 @@ class fordFulkerson:
        
         self.graphSize = 0
         self.nodesMap = None
+        self.capabilityMap = None
         self.totalNodes = None
         self.top = 500
         path = None
@@ -28,10 +29,25 @@ class fordFulkerson:
                 info =  [int(x) for x in line.strip().split()]  
                 origin , final, value = info  
                 self.nodesMap[origin-1][final-1] = value 
-                
+                self.nodesMap[origin-1][final-1] = self.top
             countLines+=1
-            
-    def getRoute(self, init, final):
-        actual = state(init, nodesMap)
-        while(not (actual.isFinalState(final)) ):
 
+    '''
+        Teniendo los estados ya definidos, se desea buscar el camino mejor utilizado para llegar a nodo. CapabilityMap es 
+        la que permite construir implicitamente el grafo residual
+    '''        
+
+    def bestFirst(self, init, final):
+        actual = state(init, nodesMap)
+        queue_s = []
+        queue_s.append(actual)
+        while(len(queue_s)> 0):
+            s = queue_s.pop(0)
+            if(visited(s)): 
+                continue
+            s.visited = True
+            actions = s.getActions()
+            for a in actions:
+                newStep = a.getState(s)
+                
+        #Actualizar CapabilityMap al encontrar un camino
