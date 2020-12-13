@@ -6,13 +6,13 @@ class fordFulkerson:
         self.nodesMap = None
         self.capabilityMap = None
         self.totalNodes = None
-        self.top = 100
+        self.top = 2000
         path = None
         countLines = 0
 
         #Se lee el dataset por defecto, seria bueno generar numeros aleatorios
         if(universalMap is None):
-            path = 'Dataset/instance1.txt' 
+            path = 'Dataset/instance5.txt' 
         else:
             path = universalMap
         
@@ -28,8 +28,8 @@ class fordFulkerson:
             else:
                 info =  [int(x) for x in line.strip().split()]  
                 origin, final, value = info  
-                self.nodesMap[origin-1][final-1] = value 
-                self.capabilityMap[origin-1][final-1] = self.top
+                self.nodesMap[origin][final] = value 
+                self.capabilityMap[origin][final] = self.top
             countLines+=1
 
     '''
@@ -44,9 +44,11 @@ class fordFulkerson:
             if(s is None):
                 nextPath = False
             else:
+                print("camino encontrado")
                 paths.append(s)
                 self.updateCapabilityMap(s)
         return paths    
+
 
     '''
         Teniendo los estados ya definidos, se desea buscar el camino mejor utilizado para llegar a nodo. capabilityMap es 
