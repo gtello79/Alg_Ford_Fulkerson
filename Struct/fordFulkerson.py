@@ -3,15 +3,14 @@ import numpy as np
 
 class fordFulkerson:
     def __init__(self, universalMap = None):
-       
-        self.graphSize = 0
         self.nodesMap = None
         self.capabilityMap = None
         self.totalNodes = None
         self.top = 500
         path = None
         countLines = 0
-        
+
+        #Se lee el dataset por defecto, seria bueno generar numeros aleatorios
         if(universalMap is None):
             path = 'Dataset/instance1.txt' 
         else:
@@ -25,29 +24,34 @@ class fordFulkerson:
                 size = info[1].split("x")
                 self.totalNodes = int(size[0])
                 self.nodesMap = np.zeros((self.totalNodes, self.totalNodes), dtype=int)
+                self.capabilityMap = np.zeros((self.totalNodes, self.totalNodes), dtype=int)
             else:
                 info =  [int(x) for x in line.strip().split()]  
-                origin , final, value = info  
+                origin, final, value = info  
                 self.nodesMap[origin-1][final-1] = value 
-                self.nodesMap[origin-1][final-1] = self.top
+                self.capabilityMap[origin-1][final-1] = self.top
             countLines+=1
 
     '''
-        Teniendo los estados ya definidos, se desea buscar el camino mejor utilizado para llegar a nodo. CapabilityMap es 
+        Teniendo los estados ya definidos, se desea buscar el camino mejor utilizado para llegar a nodo. capabilityMap es 
         la que permite construir implicitamente el grafo residual
     '''        
-
-    def bestFirst(self, init, final):
-        actual = state(init, nodesMap)
+    def solve(self, init, final):
+        iterCounter = 0
+        actual = state([init], self.nodesMap, self.capabilityMap, self.totalNodes) 
         queue_s = []
         queue_s.append(actual)
         while(len(queue_s)> 0):
             s = queue_s.pop(0)
-            if(visited(s)): 
-                continue
-            s.visited = True
+            if(s.isFinalState(final)):
+                return s
+            
             actions = s.getActions()
             for a in actions:
-                newStep = a.getState(s)
-                
+                state_s = s.transition(a)
+                if(state_s.isValidState()):
+                    queue_s.append(state_s)
+
+        print("No se encontraron estado solucion")
+        return None
         #Actualizar CapabilityMap al encontrar un camino

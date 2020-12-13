@@ -3,11 +3,12 @@ import copy as cp
 from .action import action
 
 class state:
-    def __init__(self, onRoad, nodesMap, capabilyMap):
+    def __init__(self, onRoad, nodesMap, capabilyMap, totalNodes):
         self.nodesMap = nodesMap
         self.node = onRoad
         self.capMap = capabilyMap
         self.eval = 0
+        self.totalNodes = totalNodes
         self.visited = False
     
     '''
@@ -16,7 +17,7 @@ class state:
     def getActions(self):
         actionList = []
         lastPlace = self.node[-1]
-        for i in nodesMap.shape[0]:
+        for i in range(self.totalNodes):
             if self.nodesMap[lastPlace][i] != 0:
                 destiny = i
                 value = self.nodesMap[lastPlace][i]
@@ -31,7 +32,7 @@ class state:
 
     def transition(self, action):
         s = cp.deepcopy(self)
-        s.append(action.newPoint)
+        s.node.append(action.actual)
         s.eval += action.distance
         return s
 
@@ -42,7 +43,8 @@ class state:
         xf = self.node[-1]
         xi = self.node[-2]
         maxFluj = self.capMap[xi][xf]
-        return eval < maxFluj
+        self.evaluateState()
+        return self.eval < maxFluj
 
     '''
         Evalua el estado según el record de puntos visitados por el estado (flujo acumulado)
